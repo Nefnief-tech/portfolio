@@ -20,6 +20,8 @@ interface Props { onComplete: () => void; }
 
 export function BootSequence({ onComplete }: Props) {
   const [visibleLines, setVisibleLines] = useState<string[]>([]);
+  const LINE_DELAY = 0.04;
+
   const [done, setDone] = useState(false);
   const completedRef = useRef(false);
 
@@ -62,16 +64,16 @@ export function BootSequence({ onComplete }: Props) {
         <motion.div
           className="font-mono text-sm text-text-soft p-6 space-y-0.5"
           exit={{ opacity: 0, transition: { duration: 0.3 } }}
-        >
+         >
           {visibleLines.map((line, idx) => (
             <motion.div
-              key={idx}
+              key={line || "\u00A0"}
               initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.1 }}
-              className={line.startsWith("│") || line.startsWith("┌") || line.startsWith("└")
+              transition={{ delay: idx * LINE_DELAY, duration: 0.15 }}
+              className={line?.startsWith("│") || line?.startsWith("┌") || line?.startsWith("└")
                 ? "text-primary glow-primary"
-                : line.includes("[OK]")
+                : line?.includes("[OK]")
                   ? "text-primary"
                   : "text-text-soft"}
             >
