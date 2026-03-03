@@ -1,26 +1,48 @@
 @import "tailwindcss";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/700.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:           #080010;
+  --surface:      #0D0018;
+  --primary:      #9B30FF;
+  --accent:       #E040FB;
+  --text:         #C8B4E8;
+  --muted:        #5B4A73;
+  --border:       #2A1A40;
+  --glow-primary: 0 0 8px #9B30FF88, 0 0 20px #9B30FF44;
+  --glow-accent:  0 0 8px #E040FB88;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* CRT scanline texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* Phosphor glow utilities */
+.glow-primary { text-shadow: var(--glow-primary); }
+.glow-accent  { text-shadow: var(--glow-accent); }
