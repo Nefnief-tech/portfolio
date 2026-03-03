@@ -17,6 +17,7 @@ export function InputLine({ value, onType, onBackspace, onSubmit, disabled }: Pr
 
   useEffect(() => {
     if (!disabled) inputRef.current?.focus();
+    else inputRef.current?.blur();
   }, [disabled]);
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -31,9 +32,9 @@ export function InputLine({ value, onType, onBackspace, onSubmit, disabled }: Pr
       className="flex items-center font-mono text-sm px-6 py-1 cursor-text"
     >
       <span className="text-primary glow-primary select-none">{PROMPT}</span>
-      <span className="text-text-soft">{value}</span>
+      <span className="text-text">{value}</span>
       <motion.span
-        className="inline-block w-[9px] h-[1.1em] bg-primary ml-px"
+        className="inline-block w-[9px] h-[1.1em] bg-primary ml-[1px]"
         animate={{ opacity: disabled ? 0 : [1, 1, 0, 0] }}
         transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" as any }}
       />
