@@ -1,14 +1,17 @@
 "use client";
 import { useRef, useEffect } from "react";
 import { useTerminal }      from "@/lib/terminal/useTerminal";
+import { BootSequence }      from "@/components/terminal/BootSequence";
 import { HistoryLog }       from "./HistoryLog";
 import { OutputRenderer }   from "./OutputRenderer";
 import { InputLine }        from "./InputLine";
 import type { Section }     from "@/lib/terminal/types";
 
-interface Props { onNavigate?: (s: Section) => void; booted?: boolean; }
+interface Props {
+  onNavigate?: (s: Section) => void;
+}
 
-export function TerminalWindow({ onNavigate, booted }: Props) {
+export function TerminalWindow({ onNavigate }: Props) {
   const { state, type, backspace, submit, navigate } = useTerminal();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -16,6 +19,36 @@ export function TerminalWindow({ onNavigate, booted }: Props) {
     if (state.history.length >= 0) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
+  }, [state.history.length]);
+
+  const handleNavigate = (s: Section) => {
+    navigate(s);
+    onNavigate?.(s);
+    window.history.replaceState(null, "", `/#${s}`);
+  };
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      <BootSequence />
+      <TerminalWindow onNavigate={setActiveSection} />
+    </div>
+  );
+}
+  }, [state.history.length]);
+
+  const handleNavigate = (s: Section) => {
+    navigate(s);
+    onNavigate?.(s);
+    window.history.replaceState(null, "", `/#${s}`);
+  };
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      <BootSequence />
+      <TerminalWindow onNavigate={setActiveSection} />
+    </div>
+  );
+}
   }, [state.history.length]);
 
   const handleNavigate = (s: Section) => {
