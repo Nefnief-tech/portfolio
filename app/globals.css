@@ -46,3 +46,7 @@ body::after {
 /* Phosphor glow utilities */
 .glow-primary { text-shadow: var(--glow-primary); }
 .glow-accent  { text-shadow: var(--glow-accent); }
+
+/* Utilities for CSS variables */
+.text-muted { color: var(--muted); }
+.text-text-soft { color: var(--text); }

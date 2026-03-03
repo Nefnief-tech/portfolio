@@ -26,7 +26,7 @@ export function HistoryLog({ entries }: Props) {
               key={idx}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`whitespace-pre-wrap ${entry.isError ? "text-red-400" : "text-text-soft"}`}
+               className={`whitespace-pre-wrap ${entry.isError ? "text-red-500" : "text-text-soft"}`}
             >
               {entry.text}
             </motion.div>
