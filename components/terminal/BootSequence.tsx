@@ -1,6 +1,6 @@
 // components/terminal/BootSequence.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const BOOT_LINES = [
@@ -21,27 +21,35 @@ interface Props { onComplete: () => void; }
 export function BootSequence({ onComplete }: Props) {
   const [visibleLines, setVisibleLines] = useState<string[]>([]);
   const [done, setDone] = useState(false);
+  const completedRef = useRef(false);
+
+  const handleComplete = useCallback(() => {
+    if (!completedRef.current) {
+      completedRef.current = true;
+      onComplete();
+    }
+  }, [onComplete]);
 
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
       if (i >= BOOT_LINES.length) {
         clearInterval(interval);
-        setTimeout(() => { setDone(true); setTimeout(onComplete, 400); }, 300);
+        setTimeout(() => { setDone(true); setTimeout(handleComplete, 400); }, 300);
         return;
       }
       setVisibleLines((prev) => [...prev, BOOT_LINES[i]]);
       i++;
     }, 220);
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, [handleComplete]);
 
   // Skip on any keypress
   useEffect(() => {
-    const skip = () => { setDone(true); onComplete(); };
+    const skip = () => { setDone(true); handleComplete(); };
     window.addEventListener("keydown", skip, { once: true });
     return () => window.removeEventListener("keydown", skip);
-  }, [onComplete]);
+  }, [handleComplete]);
 
   return (
     <AnimatePresence>
