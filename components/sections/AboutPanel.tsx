@@ -14,7 +14,11 @@ export function AboutPanel() {
     ``,
     ...ABOUT.bio,
     ``,
-    ...ABOUT.links.map(l => `  [${l.label}] ${l.href}`),
+    ...ABOUT.links.map(l => ({
+      type: 'link' as const,
+      label: l.label,
+      href: l.href,
+    })),
   ];
 
   return (
@@ -26,16 +30,29 @@ export function AboutPanel() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * LINE_DELAY, duration: 0.15 }}
           className={
-            line.startsWith("##")
-              ? "text-accent font-bold text-base glow-accent"
-              : line.startsWith(">")
-                ? "text-muted"
-                : line.startsWith("  [")
-                  ? "text-primary underline glow-primary cursor-pointer hover:text-accent"
+            typeof line === 'string' ? (
+              line.startsWith("##")
+                ? "text-accent font-bold text-base glow-accent"
+                : line.startsWith(">")
+                  ? "text-muted"
                   : "text-text-soft"
+            ) : (
+              "text-primary underline glow-primary hover:text-accent"
+            )
           }
         >
-          {line || "\u00A0"}
+          {typeof line === 'string' ? (
+            line || "\u00A0"
+          ) : (
+            <a
+              href={line.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline glow-primary hover:text-accent"
+            >
+              [{line.label}] {line.href}
+            </a>
+          )}
         </motion.div>
       ))}
     </div>
