@@ -23,6 +23,9 @@ export function BootSequence({ onComplete }: Props) {
   const [done, setDone] = useState(false);
   const completedRef = useRef(false);
 
+  const prefersReduced = typeof window !== "undefined"
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   const handleComplete = useCallback(() => {
     if (!completedRef.current) {
       completedRef.current = true;
@@ -31,6 +34,7 @@ export function BootSequence({ onComplete }: Props) {
   }, [onComplete]);
 
   useEffect(() => {
+    if (prefersReduced) { handleComplete(); return; }
     let i = 0;
     const interval = setInterval(() => {
       if (i >= BOOT_LINES.length) {
@@ -42,14 +46,15 @@ export function BootSequence({ onComplete }: Props) {
       i++;
     }, 220);
     return () => clearInterval(interval);
-  }, [handleComplete]);
+  }, [handleComplete, prefersReduced]);
 
   // Skip on any keypress
   useEffect(() => {
+    if (prefersReduced) return;
     const skip = () => { setDone(true); handleComplete(); };
     window.addEventListener("keydown", skip, { once: true });
     return () => window.removeEventListener("keydown", skip);
-  }, [handleComplete]);
+  }, [handleComplete, prefersReduced]);
 
   return (
     <AnimatePresence>
