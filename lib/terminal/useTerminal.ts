@@ -66,21 +66,21 @@ function reducer(state: TerminalState, action: Action): TerminalState {
             { kind: "output", text: cmd.easterText! },
           ],
         };
-      if (cmd.action === "help") {
-        const lines = Object.entries(COMMANDS)
-          .filter(
-            ([, v]) =>
-              v.action !== "easter" &&
-              ![
-                "?",
-                "whoami",
-                "ls projects",
-                "cat skills.json",
-                "./contact",
-                "cls",
-              ].includes(v.description)
-          )
-          .map(([k, v]) => `  ${k.padEnd(16)} -- ${v.description}`);
+       if (cmd.action === "help") {
+         const lines = Object.entries(COMMANDS)
+           .filter(
+             ([k, v]) =>
+               v.action !== "easter" &&
+               ![
+                 "?",
+                 "whoami",
+                 "ls projects",
+                 "cat skills.json",
+                 "./contact",
+                 "cls",
+               ].includes(k)
+           )
+           .map(([k, v]) => `  ${k.padEnd(16)} -- ${v.description}`);
         return {
           ...state,
           currentCommand: "",
