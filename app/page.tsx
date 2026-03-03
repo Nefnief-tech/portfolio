@@ -16,11 +16,11 @@ export default function Home() {
 
       <div className="relative z-10 h-full flex items-center justify-center p-4">
         <div className="w-full max-w-4xl h-full max-h-[90vh] rounded-xl border border-border bg-surface/90 backdrop-blur-sm overflow-auto shadow-2xl shadow-primary/10">
-          {!booted ? (
-            <BootSequence onComplete={() => setBooted(true)} />
-          ) : (
-            <TerminalWindow onNavigate={setActiveSection} />
-          )}
+            {!booted ? (
+              <BootSequence onComplete={() => setBooted(true)} />
+            ) : (
+              <TerminalWindow onNavigate={setActiveSection} booted={booted} />
+            )}
         </div>
       </div>
 

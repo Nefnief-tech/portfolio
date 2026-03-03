@@ -6,9 +6,9 @@ import { OutputRenderer }   from "./OutputRenderer";
 import { InputLine }        from "./InputLine";
 import type { Section }     from "@/lib/terminal/types";
 
-interface Props { onNavigate?: (s: Section) => void; }
+interface Props { onNavigate?: (s: Section) => void; booted?: boolean; }
 
-export function TerminalWindow({ onNavigate }: Props) {
+export function TerminalWindow({ onNavigate, booted }: Props) {
   const { state, type, backspace, submit, navigate } = useTerminal();
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -33,20 +33,22 @@ export function TerminalWindow({ onNavigate }: Props) {
         <span className="ml-4 text-muted text-xs font-mono">portfolio - bash</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-2">
-        <HistoryLog entries={state.history} />
-        <OutputRenderer activeSection={state.activeSection} />
-        <div ref={bottomRef} />
-      </div>
+      {booted ? (
+        <div className="flex-1 overflow-y-auto py-2">
+          <HistoryLog entries={state.history} />
+          <OutputRenderer activeSection={state.activeSection} />
+          <div ref={bottomRef} />
+        </div>
 
-      <div className="border-t border-border shrink-0 py-1">
-        <InputLine
-          value={state.currentCommand}
-          onType={type}
-          onBackspace={backspace}
-          onSubmit={submit}
-        />
-      </div>
+        <div className="border-t border-border shrink-0 py-1">
+          <InputLine
+            value={state.currentCommand}
+            onType={type}
+            onBackspace={backspace}
+            onSubmit={submit}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
