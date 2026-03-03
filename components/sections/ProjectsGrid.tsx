@@ -31,6 +31,7 @@ export function ProjectsGrid() {
             <button
               className="text-muted hover:text-primary mb-3 text-xs"
               onClick={() => setExpanded(null)}
+              aria-label="Go back to projects list"
             >
               ← back to projects
             </button>
@@ -47,7 +48,7 @@ export function ProjectsGrid() {
             ))}
           </motion.div>
         ) : (
-          <motion.div key="grid" className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {PROJECTS.map((p, i) => (
               <ProjectCard key={p.id} project={p} onExpand={setExpanded} delay={i * 0.07} />
             ))}

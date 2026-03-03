@@ -15,7 +15,7 @@ export function ProjectCard({ project, onExpand, delay }: Props) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.2, type: "spring", stiffness: 120, damping: 14 }}
-      whileHover={{ scale: 1.02, boxShadow: "0 0 16px #9B30FF55" }}
+      whileHover={{ scale: 1.02, boxShadow: "var(--glow-hover)" }}
       onClick={() => onExpand(project.id)}
       className="border border-border rounded-md p-4 cursor-pointer bg-surface/60 hover:border-primary transition-colors"
     >

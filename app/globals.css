@@ -14,6 +14,7 @@
   --border:       #2A1A40;
   --glow-primary: 0 0 8px #9B30FF88, 0 0 20px #9B30FF44;
   --glow-accent:  0 0 8px #E040FB88;
+  --glow-hover:   0 0 16px var(--primary)66;
 }
 
 * { box-sizing: border-box; }
