@@ -17,7 +17,7 @@ export function TerminalWindow({ onNavigate, booted }: Props) {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [state.history.length]);
+  }, [state]);
 
   const handleNavigate = (s: Section) => {
     navigate(s);
