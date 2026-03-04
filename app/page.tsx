@@ -19,7 +19,7 @@ export default function Home() {
           {booted ? (
             <BootSequence onComplete={() => setBooted(true)} />
           ) : (
-            <TerminalWindow onNavigate={setActiveSection} />
+            <TerminalWindow onNavigate={setActiveSection} booted={booted} />
           )}
         </div>
       </div>
