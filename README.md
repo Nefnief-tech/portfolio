@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nefnief's Terminal Portfolio
+
+A terminal-style portfolio website with a dark purple aesthetic, animated boot sequence, and real GitHub data.
+
+![Terminal](https://img.shields.io/badge/terminal-portfolio-9b30ff?style=for-the-badge)
+![Bun](https://img.shields.io/badge/runtime-bun-f9f1e1?style=for-the-badge&logo=bun)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=for-the-badge&logo=typescript)
+
+## Features
+
+- **Animated Boot Sequence** — non-skippable startup with neofetch-style system info, colorized terminal output, and CRT scanline overlay
+- **Interactive Terminal** — type commands like a real shell with ANSI-style colors, blinking block cursor, and fuzzy command suggestions
+- **GUI Mode** — type `gui` to switch to a scroll-friendly view with staggered reveal animations and color-coded sections
+- **Real Data** — projects, skills, and profile info pulled from GitHub
+- **Dark Purple Theme** — custom color palette with kinetic glow effects and phosphor text shadows
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `help` | Show available commands |
+| `about` | Who I am |
+| `projects` | Things I've built |
+| `skills` | Tech stack |
+| `contact` | Get in touch |
+| `gui` | Switch to GUI mode |
+| `clear` | Clear terminal |
+
+## Tech Stack
+
+- **Runtime** — [Bun](https://bun.sh)
+- **Framework** — [Vinext.js](https://github.com/nicely-gg/vinext) (Next.js-compatible)
+- **Language** — TypeScript (strict)
+- **Styling** — Tailwind CSS v4
+- **Animation** — Framer Motion
+- **Linting** — Biome
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+# Install dependencies
+bun install
+
+# Start dev server
 bun dev
+
+# Build for production
+bun run build
+
+# Type check
+bunx tsc --noEmit
+
+# Lint
+bun run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+app/
+  page.tsx                 # Boot → Terminal → GUI state machine
+  globals.css              # Terminal colors, CRT effects, glow utilities
+components/
+  terminal/
+    BootSequence.tsx        # Animated startup with neofetch
+    TerminalWindow.tsx      # Main terminal shell
+    InputLine.tsx           # Prompt with blinking cursor
+    HistoryLog.tsx          # Command history renderer
+  GUIView.tsx              # Scroll-friendly GUI mode
+  sections/                # About, Projects, Skills, Contact panels
+lib/
+  terminal/
+    commands.ts             # Command registry
+    useTerminal.ts          # Terminal state reducer
+    startup.ts              # Boot transcript generator
+  content/
+    about.ts                # Profile data
+    projects.ts             # Project entries
+    skills.ts               # Tech stack categories
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
