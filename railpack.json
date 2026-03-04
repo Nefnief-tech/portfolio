@@ -6,17 +6,36 @@
   },
   "steps": {
     "install": {
-      "commands": ["bun install"]
+      "commands": [
+        { "src": "package.json", "dest": "package.json" },
+        { "src": "bun.lock", "dest": "bun.lock" },
+        { "cmd": "bun install", "customName": "Install dependencies" },
+        { "path": "node_modules/.bin" }
+      ]
     },
     "build": {
       "inputs": [{ "step": "install" }],
-      "commands": ["bun run build"],
+      "commands": [
+        { "src": ".", "dest": "." },
+        { "cmd": "bun run build", "customName": "Build application" }
+      ],
       "variables": {
         "NODE_ENV": "production"
       }
     }
   },
+  "caches": {
+    "bun": {
+      "path": "/root/.bun/install/cache"
+    }
+  },
   "deploy": {
+    "inputs": [
+      {
+        "step": "build",
+        "include": ["dist", "node_modules", "package.json"]
+      }
+    ],
     "startCommand": "bun run start",
     "variables": {
       "NODE_ENV": "production",
