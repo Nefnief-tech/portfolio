@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useReducer } from "react";
-import { COMMANDS, closestCommand } from "./commands";
+import { buildHelpText, COMMANDS, closestCommand } from "./commands";
+import { buildStartupTranscript } from "./startup";
 import type { HistoryEntry, Section, TerminalState } from "./types";
 
 type Action =
@@ -9,11 +10,16 @@ type Action =
   | { type: "SUBMIT" }
   | { type: "CLEAR" }
   | { type: "SET_ANIMATING"; value: boolean }
-  | { type: "NAVIGATE"; section: Section };
+  | { type: "SEED_HISTORY"; lines: string[] }
+  | { type: "NAVIGATE"; section: Section }
+  | { type: "CLEAR_GUI_REQUEST" };
 
-const PROMPT_PREFIX = "[you@portfolio ~]$ ";
+const PROMPT_PREFIX = "[nefnief@portfolio ~]$ ";
 
-function reducer(state: TerminalState, action: Action): TerminalState {
+export function reduceTerminal(
+  state: TerminalState,
+  action: Action,
+): TerminalState {
   switch (action.type) {
     case "TYPE":
       return { ...state, currentCommand: state.currentCommand + action.char };
@@ -23,8 +29,18 @@ function reducer(state: TerminalState, action: Action): TerminalState {
       return { ...state, history: [], activeSection: null };
     case "SET_ANIMATING":
       return { ...state, isAnimating: action.value };
+    case "SEED_HISTORY":
+      return {
+        ...state,
+        history: [
+          ...state.history,
+          ...action.lines.map((text) => ({ kind: "output" as const, text })),
+        ],
+      };
     case "NAVIGATE":
       return { ...state, activeSection: action.section };
+    case "CLEAR_GUI_REQUEST":
+      return { ...state, guiRequested: false };
     case "SUBMIT": {
       const raw = state.currentCommand.trim().toLowerCase();
       const inputEntry: HistoryEntry = {
@@ -55,32 +71,38 @@ function reducer(state: TerminalState, action: Action): TerminalState {
         };
       }
       if (cmd.action === "clear")
-        return { ...state, currentCommand: "", history: [], activeSection: null };
-      if (cmd.action === "easter")
+        return {
+          ...state,
+          currentCommand: "",
+          history: [],
+          activeSection: null,
+        };
+      if (cmd.action === "easter") {
+        if (!cmd.easterText)
+          return {
+            ...state,
+            currentCommand: "",
+            history: [
+              ...state.history,
+              inputEntry,
+              {
+                kind: "output",
+                text: "internal error: easter command missing text",
+                isError: true,
+              },
+            ],
+          };
         return {
           ...state,
           currentCommand: "",
           history: [
             ...state.history,
             inputEntry,
-            { kind: "output", text: cmd.easterText! },
+            { kind: "output", text: cmd.easterText, colorClass: "term-yellow" },
           ],
         };
-       if (cmd.action === "help") {
-         const lines = Object.entries(COMMANDS)
-           .filter(
-             ([k, v]) =>
-               v.action !== "easter" &&
-               ![
-                 "?",
-                 "whoami",
-                 "ls projects",
-                 "cat skills.json",
-                 "./contact",
-                 "cls",
-               ].includes(k)
-           )
-           .map(([k, v]) => `  ${k.padEnd(16)} -- ${v.description}`);
+      }
+      if (cmd.action === "gui")
         return {
           ...state,
           currentCommand: "",
@@ -89,50 +111,103 @@ function reducer(state: TerminalState, action: Action): TerminalState {
             inputEntry,
             {
               kind: "output",
-              text: ["Available commands:", ...lines].join("\n"),
+              text: "Switching to GUI mode...",
+              colorClass: "term-green-glow",
+            },
+          ],
+          guiRequested: true,
+        };
+      if (cmd.action === "help")
+        return {
+          ...state,
+          currentCommand: "",
+          history: [
+            ...state.history,
+            inputEntry,
+            {
+              kind: "output",
+              text: buildHelpText(),
+              colorClass: "term-cyan",
             },
           ],
         };
-      }
+      if (!cmd.target)
+        return {
+          ...state,
+          currentCommand: "",
+          history: [
+            ...state.history,
+            inputEntry,
+            {
+              kind: "output",
+              text: "internal error: section command missing target",
+              isError: true,
+            },
+          ],
+        };
+
       return {
         ...state,
         currentCommand: "",
-        activeSection: cmd.target!,
+        activeSection: cmd.target,
         history: [
           ...state.history,
           inputEntry,
-          { kind: "section", section: cmd.target! },
+          { kind: "section", section: cmd.target },
         ],
       };
     }
   }
 }
 
-const INITIAL: TerminalState = {
-  history: [],
+export const INITIAL_TERMINAL_STATE: TerminalState = {
+  history: buildStartupTranscript().lines.map((line) => ({
+    kind: "output",
+    text: line.text,
+    colorClass: line.colorClass,
+  })),
   currentCommand: "",
   activeSection: null,
   isAnimating: false,
+  guiRequested: false,
 };
 
 export function useTerminal() {
-  const [state, dispatch] = useReducer(reducer, INITIAL);
+  const [state, dispatch] = useReducer(reduceTerminal, INITIAL_TERMINAL_STATE);
 
   const type = useCallback(
     (char: string) => dispatch({ type: "TYPE", char }),
-    []
+    [],
   );
   const backspace = useCallback(() => dispatch({ type: "BACKSPACE" }), []);
   const submit = useCallback(() => dispatch({ type: "SUBMIT" }), []);
   const clear = useCallback(() => dispatch({ type: "CLEAR" }), []);
   const navigate = useCallback(
     (s: Section) => dispatch({ type: "NAVIGATE", section: s }),
-    []
+    [],
   );
   const setAnimating = useCallback(
     (v: boolean) => dispatch({ type: "SET_ANIMATING", value: v }),
-    []
+    [],
+  );
+  const seedHistory = useCallback(
+    (lines: string[]) => dispatch({ type: "SEED_HISTORY", lines }),
+    [],
+  );
+  const clearGuiRequest = useCallback(
+    () => dispatch({ type: "CLEAR_GUI_REQUEST" }),
+    [],
   );
 
-  return { state, type, backspace, submit, clear, navigate, setAnimating };
+  return {
+    state,
+    type,
+    backspace,
+    submit,
+    clear,
+    navigate,
+    setAnimating,
+    seedHistory,
+    clearGuiRequest,
+  };
 }

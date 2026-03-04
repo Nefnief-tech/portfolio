@@ -21,6 +21,9 @@
 /build
 /dist
 
+# git worktrees
+.worktrees/
+
 # misc
 .DS_Store
 *.pem
