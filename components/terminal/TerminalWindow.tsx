@@ -1,11 +1,10 @@
 "use client";
-import { useRef, useEffect } from "react";
-import { useTerminal }      from "@/lib/terminal/useTerminal";
-import { BootSequence }      from "@/components/terminal/BootSequence";
-import { HistoryLog }       from "./HistoryLog";
-import { OutputRenderer }   from "./OutputRenderer";
-import { InputLine }        from "./InputLine";
-import type { Section }     from "@/lib/terminal/types";
+import { useEffect, useRef } from "react";
+import type { Section } from "@/lib/terminal/types";
+import { useTerminal } from "@/lib/terminal/useTerminal";
+import { HistoryLog } from "./HistoryLog";
+import { InputLine } from "./InputLine";
+import { OutputRenderer } from "./OutputRenderer";
 
 interface Props {
   onNavigate?: (s: Section) => void;
@@ -16,39 +15,7 @@ export function TerminalWindow({ onNavigate }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (state.history.length >= 0) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [state.history.length]);
-
-  const handleNavigate = (s: Section) => {
-    navigate(s);
-    onNavigate?.(s);
-    window.history.replaceState(null, "", `/#${s}`);
-  };
-
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <BootSequence />
-      <TerminalWindow onNavigate={setActiveSection} />
-    </div>
-  );
-}
-  }, [state.history.length]);
-
-  const handleNavigate = (s: Section) => {
-    navigate(s);
-    onNavigate?.(s);
-    window.history.replaceState(null, "", `/#${s}`);
-  };
-
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <BootSequence />
-      <TerminalWindow onNavigate={setActiveSection} />
-    </div>
-  );
-}
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [state.history.length]);
 
   const handleNavigate = (s: Section) => {
@@ -63,25 +30,25 @@ export function TerminalWindow({ onNavigate }: Props) {
         <span className="w-3 h-3 rounded-full bg-red-500/60" />
         <span className="w-3 h-3 rounded-full bg-yellow-500/60" />
         <span className="w-3 h-3 rounded-full bg-green-500/60" />
-        <span className="ml-4 text-muted text-xs font-mono">portfolio - bash</span>
+        <span className="ml-4 text-muted text-xs font-mono">
+          portfolio - bash
+        </span>
       </div>
 
-      {booted ? (
-        <div className="flex-1 overflow-y-auto py-2">
-          <HistoryLog entries={state.history} />
-          <OutputRenderer activeSection={state.activeSection} />
-          <div ref={bottomRef} />
-        </div>
+      <div className="flex-1 overflow-y-auto py-2">
+        <HistoryLog entries={state.history} />
+        <OutputRenderer activeSection={state.activeSection} />
+        <div ref={bottomRef} />
+      </div>
 
-        <div className="border-t border-border shrink-0 py-1">
-          <InputLine
-            value={state.currentCommand}
-            onType={type}
-            onBackspace={backspace}
-            onSubmit={submit}
-          />
-        </div>
-      ) : null}
+      <div className="border-t border-border shrink-0 py-1">
+        <InputLine
+          value={state.currentCommand}
+          onType={type}
+          onBackspace={backspace}
+          onSubmit={submit}
+        />
+      </div>
     </div>
   );
 }
