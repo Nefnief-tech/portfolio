@@ -36,7 +36,7 @@
         "include": ["dist", "node_modules", "package.json"]
       }
     ],
-    "startCommand": "bun run start",
+    "startCommand": "node node_modules/vinext/dist/cli.js start",
     "variables": {
       "NODE_ENV": "production",
       "PORT": "3000"
